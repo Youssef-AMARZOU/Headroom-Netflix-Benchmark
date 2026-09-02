@@ -17,6 +17,7 @@ console = Console()
 
 try:
     from headroom import compress
+    from headroom.compress import CompressConfig
 
     HEADROOM_AVAILABLE = True
 except ImportError:
@@ -32,8 +33,9 @@ def compress_tool_output(tool_output: dict, use_headroom: bool = True) -> str:
 
     try:
         messages = [{"role": "user", "content": raw_json}]
-        result = compress(messages, model="gpt-4")
-        return result[0].get("content", raw_json)
+        config = CompressConfig(compress_user_messages=True)
+        result = compress(messages, model="gpt-4", config=config)
+        return result.messages[0].get("content", raw_json)
     except Exception:
         return raw_json
 
@@ -193,7 +195,7 @@ def run_agent_demo(csv_path: str):
         result = agent.run_query(q)
         console.print(
             f"  Tool: {result['tool_used']} | "
-            f"Tokens: {result['raw_tokens']:,} → {result['compressed_tokens']:,} "
+            f"Tokens: {result['raw_tokens']:,} -> {result['compressed_tokens']:,} "
             f"([green]-{result['savings_pct']}%[/green]) | "
             f"Time: {result['total_time_ms']:.0f}ms\n"
         )

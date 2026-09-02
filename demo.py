@@ -43,7 +43,7 @@ def check_prerequisites():
 
     try:
         import headroom
-        console.print("[green]Headroom installed ✓[/green]")
+        console.print("[green]Headroom installed OK[/green]")
     except ImportError:
         console.print("[yellow]Headroom not installed — benchmark will use simulated compression[/yellow]")
         console.print("Install with: pip install \"headroom-ai[all]\"")

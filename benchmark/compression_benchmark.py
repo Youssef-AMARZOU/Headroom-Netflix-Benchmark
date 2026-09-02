@@ -140,10 +140,12 @@ def try_compress_headroom(texts: list[str]) -> list[str] | None:
     """Try to compress texts using Headroom library. Returns None if unavailable."""
     try:
         from headroom import compress
+        from headroom.compress import CompressConfig
 
         messages = [{"role": "user", "content": "\n".join(texts)}]
-        result = compress(messages, model="gpt-4")
-        compressed_content = result[0].get("content", "")
+        config = CompressConfig(compress_user_messages=True)
+        result = compress(messages, model="gpt-4", config=config)
+        compressed_content = result.messages[0].get("content", "")
         return [compressed_content]
     except ImportError:
         return None
@@ -156,11 +158,13 @@ def try_compress_headroom_json(payloads: list[dict]) -> list[str] | None:
     """Try to compress JSON payloads using Headroom."""
     try:
         from headroom import compress
+        from headroom.compress import CompressConfig
 
         json_text = json.dumps(payloads, indent=2)
         messages = [{"role": "user", "content": json_text}]
-        result = compress(messages, model="gpt-4")
-        compressed_content = result[0].get("content", "")
+        config = CompressConfig(compress_user_messages=True)
+        result = compress(messages, model="gpt-4", config=config)
+        compressed_content = result.messages[0].get("content", "")
         return [compressed_content]
     except ImportError:
         return None
@@ -174,7 +178,7 @@ def run_benchmark(csv_path: str):
     console.print(
         Panel.fit(
             "[bold cyan]Headroom Token Compression Benchmark[/bold cyan]\n"
-            "[dim]Netflix Dataset — Comparing with/without compression[/dim]",
+            "[dim]Netflix Dataset - Comparing with/without compression[/dim]",
             border_style="cyan",
         )
     )
